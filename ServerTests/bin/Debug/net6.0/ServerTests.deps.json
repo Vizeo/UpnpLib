@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "ServerTests/1.0.0": {
+        "dependencies": {
+          "UpnpLib": "1.0.0"
+        },
+        "runtime": {
+          "ServerTests.dll": {}
+        }
+      },
+      "UpnpLib/1.0.0": {
+        "runtime": {
+          "UpnpLib.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "ServerTests/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "UpnpLib/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
