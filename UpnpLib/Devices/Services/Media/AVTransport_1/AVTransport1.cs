@@ -91,11 +91,11 @@
 			.Invoke<TransportInfoResponse>();
 		}
 
-		public async Task<TransportInfoResponse> GetPositionInfo(string instanceID = "0")
+		public async Task<PositionInfoResponse> GetPositionInfo(string instanceID = "0")
 		{
 			return await CreateAction("GetPositionInfo")
 			.AddParameter("InstanceID", instanceID)
-			.Invoke<TransportInfoResponse>();
+			.Invoke<PositionInfoResponse>();
 		}
 	}
 }

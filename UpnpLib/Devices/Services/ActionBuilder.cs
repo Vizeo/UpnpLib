@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -34,7 +35,8 @@ namespace UpnpLib.Devices.Services
 			where T : ActionResponseBase
 		{
 			var response = await _soapDispatcher.Invoke(_name);
-			return (T)Activator.CreateInstance(typeof(T), response)!;
+
+            return (T)Activator.CreateInstance(typeof(T), BindingFlags.NonPublic | BindingFlags.Instance, null, new object[] { response }, null)!;
 		}
 	}
 }

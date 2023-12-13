@@ -13,10 +13,18 @@ namespace UpnpLib.Devices.Services.Media.AVTransport_1
 		internal PositionInfoResponse(string response)
 			: base(response)
 		{
-			TrackDuration = TimeSpan.Parse(XmlDocument.SelectSingleNode("//TrackDuration")!.InnerText);
-			RelTime = TimeSpan.Parse(XmlDocument.SelectSingleNode("//RelTime")!.InnerText);
+			if(TimeSpan.TryParse(XmlDocument.SelectSingleNode("//TrackDuration")!.InnerText, out var durVal))
+			{
+                TrackDuration = durVal;
+            }
 
-			XmlNode node = XmlDocument.SelectSingleNode("//TrackMetaData")!;
+            if (TimeSpan.TryParse(XmlDocument.SelectSingleNode("//RelTime")!.InnerText, out var relVal))
+            {
+				RelTime = relVal;
+            }
+
+
+            XmlNode node = XmlDocument.SelectSingleNode("//TrackMetaData")!;
 			if (node.InnerText != string.Empty &&
 				node.InnerText != "NOT_IMPLEMENTED")
 			{
