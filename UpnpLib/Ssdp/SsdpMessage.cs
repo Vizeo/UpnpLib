@@ -51,6 +51,10 @@ namespace UpnpLib.Ssdp
 
                     Protocol = requestLine.Slice(uriEnd + 1).ToString();
                 }
+                if(Method == "M-SEARCH")
+                {
+                    break;
+                }
                 else
                 {
                     //parse header

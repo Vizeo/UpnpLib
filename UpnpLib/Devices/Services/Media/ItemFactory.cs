@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -12,19 +13,20 @@ namespace UpnpLib.Devices.Services.Media
 {
 	internal static class MetadataFactory
 	{
-		public static Item GetItem(XmlNode node)
+		public static Item GetItem(XmlDocument metaDataDocument)
 		{
-			var nameSpaceManager = new XmlNamespaceManager(node.OwnerDocument!.NameTable);
+			var nameSpaceManager = new XmlNamespaceManager(metaDataDocument.NameTable);
 			nameSpaceManager.AddNamespace("upnp", "urn:schemas-upnp-org:metadata-1-0/upnp/");
-			string ic = node.SelectSingleNode("upnp:class", nameSpaceManager)!.InnerText;
+			nameSpaceManager.AddNamespace("didl", "urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/");
+			
+			var metadataNode = metaDataDocument.SelectSingleNode("//didl:item", nameSpaceManager)!;
+			string ic = metadataNode.SelectSingleNode("upnp:class", nameSpaceManager)!.InnerText;
 
-			Type type = ic switch
+			return ic switch
 			{
-				_ when ic.Contains("object.item.videoItem") => typeof(Item),
-				_ => typeof(Item)
+				_ when ic.Contains("object.item.videoItem") => Deserialize<VideoItem>(metaDataDocument.OuterXml),
+				_ => throw new Exception("Dunno")
 			};
-
-			throw new NotImplementedException(); //Not finished
 		}
 
 		private static T Deserialize<T>(string xml)

@@ -21,7 +21,7 @@ namespace UpnpLib.Devices.Services.Media.AVTransport_1
 
                 var nameSpaceManager = new XmlNamespaceManager(metaDataDocument.NameTable);
                 nameSpaceManager.AddNamespace("didl", "urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/");
-				Item = MetadataFactory.GetItem(metaDataDocument.SelectSingleNode("//didl:item", nameSpaceManager)!);
+				Item = MetadataFactory.GetItem(metaDataDocument);
             }
 
             NumberOfTracks = int.Parse(XmlDocument.SelectSingleNode("//NrTracks")!.InnerText);

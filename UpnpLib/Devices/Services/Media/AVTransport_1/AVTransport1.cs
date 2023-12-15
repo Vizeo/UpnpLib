@@ -27,8 +27,8 @@
 		{
 			return await CreateAction("Seek")
 			.AddParameter("InstanceID", instanceID)
-			.AddParameter("Unit", unit.ToString("hh:mm:ss"))
-			.AddParameter("Target", "REL_TIME")
+			.AddParameter("Unit", "REL_TIME")
+			.AddParameter("Target", unit.ToString("hh\\:mm\\:ss"))
 			.Invoke();
 		}
 
@@ -36,8 +36,8 @@
 		{
 			return await CreateAction("Seek")
 			.AddParameter("InstanceID", instanceID)
-			.AddParameter("Unit", unit.ToString("hh:mm:ss"))
-			.AddParameter("Target", "TIME_DELTA")
+			.AddParameter("Unit", "TIME_DELTA")
+			.AddParameter("Target", unit.ToString("hh\\:mm\\:ss"))
 			.Invoke();
 		}
 
