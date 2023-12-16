@@ -37,7 +37,7 @@ namespace UpnpLib.Devices
 		public string UniqueServiceName { get; }
 		public List<ServiceBase> Services { get; }
 		public List<DeviceIcon> Icons { get; }
-		public bool IsExpired => _xmlDocument == null || _expiredDate < DateTime.Now;
+		public bool IsExpired => _expiredDate < DateTime.Now;
 		public string FriendlyName => SelectSingleNode("/bk:root/bk:device/bk:friendlyName")!.InnerText;
 		public string ModelName => SelectSingleNode("/bk:root/bk:device/bk:modelName")!.InnerText;
 
