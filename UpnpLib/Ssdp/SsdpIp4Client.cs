@@ -73,8 +73,10 @@ namespace UpnpLib.Ssdp
             }
             catch (Exception e)
             {
+#if DEBUG                
                 Console.WriteLine(e);
-                Reset();
+#endif
+				Reset();
             }
         }
 
