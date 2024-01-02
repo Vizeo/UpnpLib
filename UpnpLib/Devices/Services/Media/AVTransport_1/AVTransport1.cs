@@ -97,5 +97,22 @@
 			.AddParameter("InstanceID", instanceID)
 			.Invoke<PositionInfoResponse>();
 		}
+
+		public async Task<DefaultResponse> SetNextAVTransportURI<T>(string currentURI, T item, string instanceID = "0")
+			where T : class
+		{
+			var metaData = new DIDL_Item<T>()
+			{
+				Item = item
+			};
+
+			var ms = metaData.ToString();
+
+			return await CreateAction("SetNextAVTransportURI")
+			.AddParameter("InstanceID", instanceID)
+			.AddParameter("NextURI", currentURI)
+			.AddParameter("NextURIMetaData ", metaData.ToString())
+			.Invoke();
+		}
 	}
 }
