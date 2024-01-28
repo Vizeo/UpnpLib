@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -68,6 +69,10 @@ namespace UpnpLib.Ssdp
                     if (result.Buffer[result.Buffer.Length - 1] == 10) //The last byte should be 10
                     {
                         ProcessReceivedData(result.Buffer, IPAddress);
+                    }
+                    else
+                    {
+                        
                     }
                 }
             }
