@@ -4,15 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using UpnpLib.Ssdp;
 
 namespace UpnpLib.Devices.Services
 {
 	public abstract class ServiceBase
 	{
 		private HttpClient? _client;
+		private SsdpServer _ssdpServer;
+		private Device _device;
 
-		protected ServiceBase()
+		protected ServiceBase(SsdpServer ssdpServer, Device device)
 		{
+			_ssdpServer = ssdpServer;
+			_device = device;
 		}
 
 		internal void Load(HttpClient client, XmlNode xmlNode, XmlNamespaceManager nameSpaceManager)
@@ -27,7 +32,7 @@ namespace UpnpLib.Devices.Services
 		}
 
 		protected ActionBuilder CreateAction(string name) {
-			return new ActionBuilder(name, new SoapDispatcher(_client!, this));
+			return new ActionBuilder(name, new SoapDispatcher(_ssdpServer, _device, _client!, this));
 		}
 
 		public string? ControlUri { get; private set; }

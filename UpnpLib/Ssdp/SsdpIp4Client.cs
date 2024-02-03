@@ -12,6 +12,7 @@ namespace UpnpLib.Ssdp
         private const string MULTICAST_ADDDRESS = "239.255.255.250";
         private static IPAddress _multicastAddress = IPAddress.Parse(MULTICAST_ADDDRESS);
         private static IPEndPoint _upnpMulticastEndPoint = new IPEndPoint(_multicastAddress, SSDP_PORT);
+        private static Task[] _runningTasks;
 
         private UdpClient? _multicastClient;
         private UdpClient? _localClient;
@@ -55,8 +56,10 @@ namespace UpnpLib.Ssdp
 
         protected override void Receive()
         {
-            Task.Run(() => ReceiveLoop(_multicastClient!));
-            Task.Run(() => ReceiveLoop(_localClient!));
+            _runningTasks = new Task[] {
+                Task.Run(() => ReceiveLoop(_multicastClient!)),
+                Task.Run(() => ReceiveLoop(_localClient!))
+            };
         }
 
         private async Task ReceiveLoop(UdpClient udpClient)
@@ -90,6 +93,7 @@ namespace UpnpLib.Ssdp
 #if DEBUG
             Console.WriteLine("Resetting SSDP");
 #endif
+            this._running = false;
             try
             {
                 _multicastClient!.Dispose();
@@ -102,10 +106,13 @@ namespace UpnpLib.Ssdp
             }
             catch { }
 
+            Task.WaitAll(_runningTasks);
+
             try
             {
                 Initialize();
                 Receive();
+                this._running = true;
             }
             catch (Exception e)
             {

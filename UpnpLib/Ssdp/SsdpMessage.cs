@@ -22,21 +22,19 @@ namespace UpnpLib.Ssdp
         internal SsdpMessage(byte[] data)
         {
             _headers = new List<KeyValuePair<string, string>>();
-            var test = _encoder.GetString(data);
-			var str = _encoder.GetString(data).AsSpan();
+			var str = _encoder.GetString(data);
 
             while (str.Length > 0)
             {
-                var index = str.IndexOfAny('\r', '\n');
-                var line = str.Slice(0, index)
+                var index = str.IndexOf("\r\n");
+                var line = str.Substring(0, index)
                     .Trim();
                 if (Method == null)
-                {
-                    Span<char> requestLine = new char[line.Length];
-                    line.ToUpper(requestLine, System.Globalization.CultureInfo.CurrentCulture);
+                {                    
+                    var requestLine = line.ToUpper();
 
                     var methodEnd = requestLine.IndexOf(' ');
-                    Method = requestLine.Slice(0, methodEnd).ToString();
+                    Method = requestLine.Substring(0, methodEnd).ToString();
 
                     if (Method.Contains("HTTP"))
                     {
@@ -47,9 +45,9 @@ namespace UpnpLib.Ssdp
                     }
 
                     var uriEnd = requestLine.LastIndexOf(' ');
-                    RequestUri = requestLine.Slice(methodEnd + 1, uriEnd - methodEnd - 1).ToString();
+                    RequestUri = requestLine.Substring(methodEnd + 1, uriEnd - methodEnd - 1).ToString();
 
-                    Protocol = requestLine.Slice(uriEnd + 1).ToString();
+                    Protocol = requestLine.Substring(uriEnd + 1).ToString();
                 }
                 if(Method == "M-SEARCH")
                 {
@@ -60,20 +58,19 @@ namespace UpnpLib.Ssdp
                     //parse header
                     int splitPosition = line.IndexOf(':');
                     if (splitPosition != -1)
-                    {
-                        Span<char> key = new char[splitPosition];
-                        line.Slice(0, splitPosition)
+                    {                        
+                        var key = line.Substring(0, splitPosition)
                             .Trim()
-                            .ToUpper(key, System.Globalization.CultureInfo.CurrentCulture);
+                            .ToUpper();
 
-                        var value = line.Slice(splitPosition + 1)
+                        var value = line.Substring(splitPosition + 1)
                             .Trim();
 
                         _headers.Add(new KeyValuePair<string, string>(key.ToString(), value.ToString()));
                     }
                 }
 
-                str = str.Slice(index + 2); //Moves past the \r\n
+                str = str.Substring(index + 2); //Moves past the \r\n
             }
         }
 

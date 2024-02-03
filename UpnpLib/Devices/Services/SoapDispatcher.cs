@@ -1,21 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using System.Xml;
+using UpnpLib.Ssdp;
 
 namespace UpnpLib.Devices.Services
 {
 	internal class SoapDispatcher
 	{
+		private SsdpServer _ssdpServer;
 		private List<KeyValuePair<string, string>> _parameters;
 		private HttpClient _client;
+		private Device _device;
 		private ServiceBase _service;
 
-		internal SoapDispatcher(HttpClient client, ServiceBase service)
+		internal SoapDispatcher(SsdpServer ssdpServer, Device device, HttpClient client, ServiceBase service)
 		{
+			_ssdpServer = ssdpServer;
+			_device = device;
 			_client = client;
 			_service = service;
 			_parameters = new List<KeyValuePair<string, string>>();
@@ -33,8 +33,15 @@ namespace UpnpLib.Devices.Services
 			var content = new StringContent(soapBody, Encoding.UTF8, "text/xml");
 			content.Headers.Add("Soapaction", $"\"{_service.ServiceType}#{function}\"");
 
-			var result = await _client.PostAsync(_service.ControlUri, content);
-			return await result.Content.ReadAsStringAsync();
+			try
+			{
+				var result = await _client.PostAsync(_service.ControlUri, content);
+				return await result.Content.ReadAsStringAsync();
+			}
+			catch {
+				_ssdpServer.DeviceCrashHandler(_device);
+				throw;
+			}
 		}
 
 		private string GenerateSoapRequest(string service, string function)

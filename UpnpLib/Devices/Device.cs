@@ -8,6 +8,7 @@ namespace UpnpLib.Devices
     public class Device : IDisposable
 	{
 		private readonly IServiceFactory _serviceFactory;
+		private readonly SsdpServer _ssdpServer;
 		private readonly string _host;
 		private readonly string _location;
 		private XmlDocument? _xmlDocument;
@@ -15,7 +16,8 @@ namespace UpnpLib.Devices
 		private DateTime _expiredDate;
 		private HttpClient? _client;
 
-		internal Device(SsdpMessage message, IServiceFactory serviceFactory) {
+		internal Device(SsdpServer ssdpServer, SsdpMessage message, IServiceFactory serviceFactory) {
+			_ssdpServer = ssdpServer;
 			_serviceFactory = serviceFactory;
 			string maxAge = message["CACHE-CONTROL"]!;
 			_expiredDate = DateTime.Now.AddSeconds(Convert.ToInt32(maxAge.Substring(maxAge.IndexOf('=') + 1)));
@@ -64,24 +66,32 @@ namespace UpnpLib.Devices
 
 		public async Task Load()
 		{
-			if (_xmlDocument == null)
+			try
 			{
-				if (_client == null)
+				if (_xmlDocument == null)
 				{
-					_client = new HttpClient();
-					_client.BaseAddress = new Uri(_host);
-					_client.DefaultRequestHeaders.Host = _client.BaseAddress.Authority;
+					if (_client == null)
+					{
+						_client = new HttpClient();
+						_client.BaseAddress = new Uri(_host);
+						_client.DefaultRequestHeaders.Host = _client.BaseAddress.Authority;
+					}
+					var result = await _client.GetAsync(_location);
+					var xml = await result.Content.ReadAsStringAsync();
+
+					_xmlDocument = new XmlDocument();
+					_xmlDocument.LoadXml(xml);
+					_nameSpaceManager = new XmlNamespaceManager(_xmlDocument.NameTable);
+					_nameSpaceManager.AddNamespace("bk", "urn:schemas-upnp-org:device-1-0");
+
+					LoadIcons();
+					LoadServices();
 				}
-				var result = await _client.GetAsync(_location);
-				var xml = await result.Content.ReadAsStringAsync();
-
-				_xmlDocument = new XmlDocument();
-				_xmlDocument.LoadXml(xml);
-				_nameSpaceManager = new XmlNamespaceManager(_xmlDocument.NameTable);
-				_nameSpaceManager.AddNamespace("bk", "urn:schemas-upnp-org:device-1-0");
-
-				LoadIcons();
-				LoadServices();
+			}
+			catch
+			{
+				_ssdpServer.DeviceCrashHandler(this);
+				throw;
 			}
 		}
 
@@ -110,7 +120,7 @@ namespace UpnpLib.Devices
 			XmlNodeList serviceList = SelectNodes("/bk:root/bk:device/bk:serviceList/bk:service")!;
 			foreach (XmlNode xmlNode in serviceList)
 			{
-				var serviceBase = _serviceFactory.GetService(xmlNode.SelectSingleNode("bk:serviceType", _nameSpaceManager!)!.InnerText.ToUpper());				
+				var serviceBase = _serviceFactory.GetService(_ssdpServer, this, xmlNode.SelectSingleNode("bk:serviceType", _nameSpaceManager!)!.InnerText.ToUpper());				
 				if (serviceBase != null)
 				{
 					serviceBase.Load(_client!, xmlNode, _nameSpaceManager!);

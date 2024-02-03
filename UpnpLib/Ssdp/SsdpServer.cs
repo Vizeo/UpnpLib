@@ -135,7 +135,7 @@ namespace UpnpLib.Ssdp
 				}
 				else
 				{
-					device = new Device(ssdpMessage, _serviceFactory);
+					device = new Device(this, ssdpMessage, _serviceFactory);
 					_devices.TryAdd(usn, device);
 					DeviceDiscovered?.Invoke(this, new DeviceChangeArg(device));
 				}
@@ -151,6 +151,14 @@ namespace UpnpLib.Ssdp
 				{
 					DeviceOffline?.Invoke(this, new DeviceChangeArg(device));
 				}
+			}
+		}
+
+		internal void DeviceCrashHandler(Device device)
+		{
+			if (_devices.TryRemove(device.UniqueServiceName, out _))
+			{
+				DeviceOffline?.Invoke(this, new DeviceChangeArg(device));
 			}
 		}
 
