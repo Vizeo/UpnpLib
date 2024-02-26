@@ -27,6 +27,10 @@ namespace UpnpLib.Ssdp
             while (str.Length > 0)
             {
                 var index = str.IndexOf("\r\n");
+                if (index == -1)
+                {
+                    break;
+                }
                 var line = str.Substring(0, index)
                     .Trim();
                 if (Method == null)

@@ -135,9 +135,12 @@ namespace UpnpLib.Ssdp
 				}
 				else
 				{
-					device = new Device(this, ssdpMessage, _serviceFactory);
-					_devices.TryAdd(usn, device);
-					DeviceDiscovered?.Invoke(this, new DeviceChangeArg(device));
+					if (ssdpMessage["LOCATION"] != null)
+					{
+						device = new Device(this, ssdpMessage, _serviceFactory);
+						_devices.TryAdd(usn, device);
+						DeviceDiscovered?.Invoke(this, new DeviceChangeArg(device));
+					}
 				}
 			}
 		}

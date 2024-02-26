@@ -3,6 +3,7 @@ using System.Data;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace UpnpLib.Ssdp
@@ -12,11 +13,12 @@ namespace UpnpLib.Ssdp
         private const string MULTICAST_ADDDRESS = "239.255.255.250";
         private static IPAddress _multicastAddress = IPAddress.Parse(MULTICAST_ADDDRESS);
         private static IPEndPoint _upnpMulticastEndPoint = new IPEndPoint(_multicastAddress, SSDP_PORT);
-        private static Task[] _runningTasks;
+        private static Task[]? _runningTasks;
 
         private UdpClient? _multicastClient;
         private UdpClient? _localClient;
         private bool _running = true;
+        private CancellationTokenSource? _cancellationTokenSource;
 
         public SsdpIp4Client(IPAddress iPAddress)
             : base(iPAddress)
@@ -56,7 +58,8 @@ namespace UpnpLib.Ssdp
 
         protected override void Receive()
         {
-            _runningTasks = new Task[] {
+			_cancellationTokenSource =  new CancellationTokenSource();
+			_runningTasks = new Task[] {
                 Task.Run(() => ReceiveLoop(_multicastClient!)),
                 Task.Run(() => ReceiveLoop(_localClient!))
             };
@@ -68,14 +71,13 @@ namespace UpnpLib.Ssdp
             {
                 while (_running)
                 {
-                    var result = await udpClient.ReceiveAsync();
+                    var result = await udpClient.ReceiveAsync(_cancellationTokenSource!.Token);
                     if (result.Buffer[result.Buffer.Length - 1] == 10) //The last byte should be 10
                     {
                         ProcessReceivedData(result.Buffer, IPAddress);
                     }
                     else
                     {
-                        
                     }
                 }
             }
@@ -84,6 +86,24 @@ namespace UpnpLib.Ssdp
 #if DEBUG                
                 Console.WriteLine(e);
 #endif
+				_cancellationTokenSource?.Cancel();
+				try
+				{
+					_multicastClient!.Dispose();
+				}
+				catch { }
+
+				try
+				{
+					_localClient!.Dispose();
+				}
+				catch { }
+
+				if (_runningTasks != null)
+				{
+					await Task.WhenAll(_runningTasks);
+				}
+
 				Reset();
             }
         }
@@ -93,26 +113,11 @@ namespace UpnpLib.Ssdp
 #if DEBUG
             Console.WriteLine("Resetting SSDP");
 #endif
-            this._running = false;
-            try
+			try
             {
-                _multicastClient!.Dispose();
-            }
-            catch { }
-
-            try
-            {
-                _localClient!.Dispose();
-            }
-            catch { }
-
-            Task.WaitAll(_runningTasks);
-
-            try
-            {
-                Initialize();
+				_cancellationTokenSource = new CancellationTokenSource();
+				Initialize();
                 Receive();
-                this._running = true;
             }
             catch (Exception e)
             {
@@ -143,7 +148,8 @@ namespace UpnpLib.Ssdp
         public override void Dispose()
         {
             _running = false;
-            _multicastClient!.DropMulticastGroup(_multicastAddress);
+			_cancellationTokenSource?.Cancel();
+			_multicastClient!.DropMulticastGroup(_multicastAddress);
             _multicastClient.Dispose();
         }
     }
