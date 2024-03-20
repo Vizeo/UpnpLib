@@ -53,8 +53,6 @@ namespace UpnpLib.Ssdp
                 //Console.WriteLine(e);
                 //Reset();
             }
-
-            Receive();
         }
 
         public abstract Task Broadcast(SsdpMessage ssdpMessage);
