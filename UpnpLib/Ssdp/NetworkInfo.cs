@@ -21,11 +21,11 @@ namespace UpnpLib.Ssdp
 
             Task.Run(async () =>
             {
-                while (true)
-                {
-                    await Task.Delay(TimeSpan.FromSeconds(15));
-                    SetupInterfaces();
-                }
+                //while (true)
+                //{
+                await Task.Delay(TimeSpan.FromSeconds(15));
+                //    SetupInterfaces();
+                //}
             });
         }
 
