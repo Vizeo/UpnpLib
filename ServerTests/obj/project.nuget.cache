@@ -1,8 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "v0cAspi7EOFMc1ZS9HlWV52Nx2i55l2B78NiSANY0a3XSz01bmsxHa4LmnbdZeWCKRLpqt9Sn0BzbpCAi2bzhg==",
+  "dgSpecHash": "AkeGFHep2a8=",
   "success": true,
-  "projectFilePath": "C:\\Users\\chris_jtp8n02\\source\\repos\\UpnpLib\\ServerTests\\ServerTests.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\Chris\\source\\repos\\UpnpLib\\ServerTests\\ServerTests.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Chris\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.33\\microsoft.windowsdesktop.app.ref.6.0.33.nupkg.sha512",
+    "C:\\Users\\Chris\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.33\\microsoft.netcore.app.ref.6.0.33.nupkg.sha512",
+    "C:\\Users\\Chris\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.33\\microsoft.aspnetcore.app.ref.6.0.33.nupkg.sha512",
+    "C:\\Users\\Chris\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.33\\microsoft.netcore.app.host.win-x64.6.0.33.nupkg.sha512"
+  ],
   "logs": []
 }

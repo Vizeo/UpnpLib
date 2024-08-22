@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = ServerTests
-build_property.ProjectDir = C:\Users\chris_jtp8n02\source\repos\UpnpLib\ServerTests\
+build_property.ProjectDir = C:\Users\Chris\source\repos\UpnpLib\ServerTests\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
