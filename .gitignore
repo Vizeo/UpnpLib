@@ -6,3 +6,13 @@
 **/obj/
 **/bin/
 /UpnpLib/bin/Debug/net6.0/UpnpLib.pdb
+/ServerTests/obj/Debug/net6.0/ServerTests.AssemblyInfo.cs
+/ServerTests/obj/Debug/net6.0/ServerTests.AssemblyInfoInputs.cache
+/ServerTests/obj/Debug/net6.0/ServerTests.assets.cache
+/ServerTests/obj/Debug/net6.0/ServerTests.csproj.AssemblyReference.cache
+/ServerTests/obj/Debug/net6.0/ServerTests.GeneratedMSBuildEditorConfig.editorconfig
+/ServerTests/obj/project.assets.json
+/ServerTests/obj/project.nuget.cache
+/ServerTests/obj/ServerTests.csproj.nuget.dgspec.json
+/UpnpLib/bin/Debug/net6.0/UpnpLib.dll
+/UpnpLib/bin/Debug/net6.0/UpnpLib.pdb
