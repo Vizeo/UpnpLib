@@ -133,5 +133,3 @@ baseline.json
 **/[Dd]ebug/
 **/[Bb]in/
 
-/UpnpLib/bin/Debug/net8.0/UpnpLib.dll
-/UpnpLib/bin/Debug/net8.0/UpnpLib.pdb
